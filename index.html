@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kappa League iGrad Module Tracker</title>
+<style>
+  :root{
+    --crimson:#70110c; --crimson-dk:#4d0b08; --crimson-lt:#8f1a13;
+    --gold:#d4af37; --gold-lt:#f2e0a2; --gold-dk:#a8871f;
+    --white:#ffffff; --cream:#faf7f1; --ink:#241a19; --muted:#6d5f5d;
+    --line:#e3d9d4; --ok:#1f6b3a; --warn:#9a5b00; --err:#8a2318;
+    --radius:10px; --shadow:0 1px 2px rgba(36,26,25,.06), 0 6px 18px rgba(36,26,25,.06);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--cream);color:var(--ink);
+    font:16px/1.55 "Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px 72px}
+  [hidden]{display:none !important}
+
+  /* Masthead */
+  header.masthead{background:var(--crimson);color:var(--white);border-bottom:6px solid var(--gold)}
+  .masthead-inner{max-width:1120px;margin:0 auto;padding:22px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .crest{width:56px;height:56px;flex:0 0 56px;border-radius:50%;background:var(--white);color:var(--crimson);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:21px;border:3px solid var(--gold)}
+  .masthead h1{margin:0;font-size:23px;line-height:1.2}
+  .masthead .sub{margin:4px 0 0;font-size:13px;color:var(--gold-lt);letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+  .whoami{margin-left:auto;text-align:right;font-size:13px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+  .whoami .em{color:var(--gold-lt);font-weight:600}
+  .rolechip{display:inline-block;background:var(--gold);color:var(--crimson-dk);font-weight:700;font-size:11px;
+    padding:2px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.4px}
+
+  .deadlines{background:var(--crimson-dk);color:var(--white)}
+  .deadlines-inner{max-width:1120px;margin:0 auto;padding:11px 20px;display:flex;gap:26px;flex-wrap:wrap;align-items:center;font-size:14px}
+  .deadlines b{color:var(--gold-lt)}
+  .pill{display:inline-block;background:var(--gold);color:var(--crimson-dk);font-weight:700;font-size:12px;padding:2px 9px;border-radius:999px}
+
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:22px}
+  .card-hd{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .card-hd h2{margin:0;font-size:16px;letter-spacing:.6px;text-transform:uppercase;color:var(--crimson)}
+  .card-bd{padding:18px}
+
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  label{display:block;font-size:12.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  input[type=text],input[type=email],input[type=date],select{width:100%;padding:9px 11px;font:inherit;font-size:15px;
+    color:var(--ink);background:var(--white);border:1px solid var(--line);border-radius:7px}
+  input:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold-dk)}
+  input:disabled{background:#f6f2ee;color:var(--muted)}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:14px;font-weight:700;letter-spacing:.3px;
+    padding:9px 16px;border-radius:7px;border:1px solid transparent;cursor:pointer;background:var(--crimson);color:var(--white)}
+  .btn:hover{background:var(--crimson-lt)}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .btn.gold{background:var(--gold);color:var(--crimson-dk);border-color:var(--gold-dk)}
+  .btn.gold:hover{background:var(--gold-lt)}
+  .btn.ghost{background:var(--white);color:var(--crimson);border-color:var(--crimson)}
+  .btn.ghost:hover{background:#fbf1f0}
+  .btn.sm{font-size:13px;padding:6px 12px}
+  .btn.danger{background:var(--white);color:var(--err);border-color:#d9b3ae}
+  .btn.danger:hover{background:#fdf2f1}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:14.5px}
+  .tbl th{text-align:left;background:var(--crimson);color:var(--white);font-size:12px;letter-spacing:.6px;
+    text-transform:uppercase;padding:10px 12px}
+  .tbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .tbl tbody tr:nth-child(even){background:#fcfaf7}
+  .tbl .num{text-align:center;white-space:nowrap}
+
+  .bar{height:9px;background:var(--line);border-radius:999px;overflow:hidden;min-width:100px}
+  .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--crimson),var(--gold));border-radius:999px}
+  .tierdots{display:flex;gap:4px}
+  .tierdots span{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);background:var(--white);
+    font-size:10.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center}
+  .tierdots span.on{background:var(--gold);border-color:var(--gold-dk);color:var(--crimson-dk)}
+  .lvl{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--gold);color:var(--crimson-dk)}
+  .lvl.none{background:#efeae4;color:var(--muted)}
+
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.3px;text-transform:uppercase}
+  .badge.granted{background:#e4f2e8;color:var(--ok)}
+  .badge.pending{background:#fdf0dc;color:var(--warn)}
+  .badge.revoked{background:#fbe9e7;color:var(--err)}
+
+  .leaguer{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;background:var(--white)}
+  .leaguer-hd{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 15px;background:#fbf6f5;border-bottom:1px solid var(--line);cursor:pointer}
+  .leaguer-hd .nm{font-weight:800;font-size:16px;color:var(--crimson);flex:1 1 auto;min-width:150px}
+  .leaguer-hd .meta{font-size:13px;color:var(--muted)}
+  .chev{font-size:12px;color:var(--muted);transition:transform .15s ease}
+  .leaguer.open .chev{transform:rotate(90deg)}
+  .leaguer-bd{display:none;padding:6px 15px 16px}
+  .leaguer.open .leaguer-bd{display:block}
+
+  .tier{margin-top:14px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .tier-hd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 13px;
+    background:var(--crimson);color:var(--white);font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+  .tier-hd .st{font-size:11.5px;font-weight:700;background:rgba(255,255,255,.16);padding:2px 9px;border-radius:999px;text-transform:none}
+  .tier-hd .st.done{background:var(--gold);color:var(--crimson-dk)}
+  .mod{display:flex;align-items:center;gap:12px;padding:9px 13px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .mod:last-child{border-bottom:0}
+  .mod input[type=checkbox]{width:19px;height:19px;accent-color:var(--crimson);flex:0 0 auto;cursor:pointer}
+  .mod .mname{flex:1 1 240px;font-size:15px}
+  .mod.done .mname{color:var(--ok);font-weight:600}
+  .mod .dwrap{display:flex;align-items:center;gap:7px}
+  .mod .dwrap label{margin:0;font-size:11px}
+  .mod input[type=date]{width:160px;padding:6px 9px;font-size:14px}
+  .mod .vwrap{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+  .mod .vwrap input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold-dk)}
+  .mod.verified .vwrap{color:var(--ok)}
+  .mod .late{color:var(--warn);font-size:12px;font-weight:700}
+
+  .note{font-size:13.5px;color:var(--muted);margin:0}
+  .empty{text-align:center;padding:32px 18px;color:var(--muted)}
+  .empty p{margin:0 0 12px}
+
+  /* Auth screens */
+  .authbox{max-width:460px;margin:70px auto;background:var(--white);border:1px solid var(--line);
+    border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .authbox .top{background:var(--crimson);color:var(--white);padding:20px;text-align:center;border-bottom:5px solid var(--gold)}
+  .authbox .top h2{margin:0;font-size:19px}
+  .authbox .top p{margin:6px 0 0;font-size:13px;color:var(--gold-lt)}
+  .authbox .body{padding:22px}
+  .authbox .body p.note{margin-bottom:16px}
+  .msg{margin-top:14px;padding:11px 13px;border-radius:7px;font-size:14px;display:none}
+  .msg.show{display:block}
+  .msg.ok{background:#e4f2e8;color:var(--ok);border:1px solid #bfe0cb}
+  .msg.bad{background:#fbe9e7;color:var(--err);border:1px solid #edc7c1}
+
+  .savepill{font-size:12px;font-weight:700;padding:3px 11px;border-radius:999px;background:#efeae4;color:var(--muted)}
+  .savepill.saving{background:#fdf0dc;color:var(--warn)}
+  .savepill.saved{background:#e4f2e8;color:var(--ok)}
+  .savepill.error{background:#fbe9e7;color:var(--err)}
+
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--crimson-dk);
+    color:var(--white);padding:11px 20px;border-radius:8px;font-size:14px;font-weight:600;box-shadow:var(--shadow);
+    border:1px solid var(--gold);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:90vw}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  footer.subinfo{margin-top:26px;border:1px solid var(--line);border-left:5px solid var(--gold);background:var(--white);
+    border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  footer.subinfo h3{margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.6px;color:var(--crimson)}
+  footer.subinfo ul{margin:8px 0 0;padding-left:20px;font-size:14.5px}
+  footer.subinfo a{color:var(--crimson);font-weight:600}
+
+  .setupwarn{background:#fdf0dc;border:1px solid var(--gold-dk);color:#5c3d00;padding:14px 16px;border-radius:8px;
+    margin:20px auto;max-width:700px;font-size:14.5px}
+  .setupwarn code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:4px;font-size:13px}
+
+  /* Print */
+  #printArea{display:none}
+  @media print{
+    body{background:#fff}
+    header.masthead,.deadlines,.card,footer.subinfo,.toast,.noprint,.authbox{display:none !important}
+    .wrap{padding:0;max-width:none}
+    #printArea{display:block}
+    .psheet{page-break-after:always}
+    .psheet:last-child{page-break-after:auto}
+    @page{margin:14mm}
+  }
+  .psheet{font-size:12px;color:#000}
+  .phd{border-bottom:3px solid var(--crimson);padding-bottom:8px;margin-bottom:10px}
+  .phd h2{margin:0;font-size:19px;color:var(--crimson)}
+  .phd .porg{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#444;margin-top:3px}
+  .pmeta{display:flex;flex-wrap:wrap;gap:6px 26px;margin:10px 0 12px;font-size:12px}
+  .pmeta div{min-width:175px}
+  .pmeta b{color:var(--crimson)}
+  table.ptbl{width:100%;border-collapse:collapse;font-size:11.5px}
+  table.ptbl th{background:var(--crimson);color:#fff;text-align:left;padding:5px 7px;font-size:10.5px;text-transform:uppercase}
+  table.ptbl td{border-bottom:1px solid #ccc;padding:5px 7px}
+  table.ptbl td.tr{white-space:nowrap;font-weight:700;color:var(--crimson)}
+  .pstat{margin:12px 0;padding:9px 12px;border:2px solid var(--gold);border-radius:6px;font-size:12.5px}
+  .psign{display:flex;gap:40px;margin-top:26px;font-size:11px}
+  .psign div{flex:1;border-top:1px solid #000;padding-top:4px}
+</style>
+</head>
+<body>
+
+<!-- ================= SETUP NOTICE (shown until keys are filled in) ============ -->
+<div id="setupWarn" class="setupwarn" hidden>
+  <b>Setup needed.</b> Open this file and replace <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code>
+  near the top of the script with the values from your Supabase project
+  (Project Settings → API). See <code>SETUP.md</code> for the full walkthrough.
+</div>
+
+<!-- ================= LOADING ================= -->
+<div id="screenLoading" class="authbox">
+  <div class="top"><h2>Kappa League &middot; iGrad Tracker</h2><p>Loading&hellip;</p></div>
+</div>
+
+<!-- ================= SIGN IN ================= -->
+<div id="screenAuth" class="authbox" hidden>
+  <div class="top">
+    <h2>Kappa League &middot; iGrad Tracker</h2>
+    <p>National Guide Right Financial Literacy Initiative</p>
+  </div>
+  <div class="body">
+    <p class="note">Enter your email and we'll send you a secure sign-in link. No password to remember.</p>
+    <label for="authEmail">Email address</label>
+    <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email">
+    <div class="btnrow" style="margin-top:14px">
+      <button class="btn" id="btnSendLink">Send my sign-in link</button>
+    </div>
+    <div class="msg" id="authMsg"></div>
+    <p class="note" style="margin-top:18px">
+      Kappa Leaguers: use the same email your Guide Right Director has on file for you.
+      Your account activates only after your parent or guardian's consent is recorded.
+    </p>
+  </div>
+</div>
+
+<!-- ================= NO ACCESS ================= -->
+<div id="screenNoAccess" class="authbox" hidden>
+  <div class="top"><h2>Account not yet active</h2><p>We couldn't match your email to a roster</p></div>
+  <div class="body">
+    <p class="note" id="noAccessMsg"></p>
+    <div class="btnrow" style="margin-top:16px">
+      <button class="btn ghost" id="btnRetryClaim">Check again</button>
+      <button class="btn danger sm" id="btnSignOut2">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="screenApp" hidden>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="crest">&Kappa;&Lambda;</div>
+      <div>
+        <h1>Kappa League &middot; iGrad Financial Literacy Tracker</h1>
+        <p class="sub">National Guide Right Financial Literacy Initiative</p>
+      </div>
+      <div class="whoami noprint">
+        <div>
+          <div class="em" id="whoEmail"></div>
+          <div><span class="rolechip" id="whoRole"></span></div>
+        </div>
+        <button class="btn ghost sm" id="btnSignOut">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="deadlines">
+    <div class="deadlines-inner">
+      <div><span class="pill">Fall Semester</span> Due <b>December 31, 2026</b></div>
+      <div><span class="pill">Spring Semester</span> Due <b>May 31, 2027</b></div>
+      <div>Recognition awarded every <b>two Tiers</b> completed</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- Chapter info (director editable) -->
+    <section class="card" id="cardChapter">
+      <div class="card-hd">
+        <h2>Chapter Information</h2>
+        <span class="savepill" id="savePill">Synced</span>
+      </div>
+      <div class="card-bd">
+        <div class="grid">
+          <div><label for="chapter">Chapter Name</label><input type="text" id="chapter"></div>
+          <div><label for="province">Province</label><input type="text" id="province"></div>
+          <div id="fieldDirector"><label for="director">Guide Right Director</label><input type="text" id="director"></div>
+          <div><label for="semester">Reporting Period</label>
+            <select id="semester">
+              <option value="Fall 2026">Fall 2026 &mdash; due Dec 31, 2026</option>
+              <option value="Spring 2027">Spring 2027 &mdash; due May 31, 2027</option>
+              <option value="2026-2027 Program Year">Full 2026&ndash;2027 Program Year</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Roster summary (director only) -->
+    <section class="card" id="cardSummary">
+      <div class="card-hd">
+        <h2>Chapter Roster Summary</h2>
+        <div class="btnrow noprint">
+          <button class="btn gold" id="btnExport">Export CSV</button>
+          <button class="btn ghost" id="btnPrint">Print Records</button>
+        </div>
+      </div>
+      <div class="card-bd"><div id="summaryWrap"></div></div>
+    </section>
+
+    <!-- Add leaguer (director only) -->
+    <section class="card" id="cardAdd">
+      <div class="card-hd"><h2>Add a Kappa Leaguer</h2></div>
+      <div class="card-bd">
+        <div class="grid">
+          <div><label for="nlName">Kappa Leaguer's Name</label><input type="text" id="nlName" placeholder="Full name"></div>
+          <div><label for="nlEmail">Their Email (for sign-in)</label><input type="email" id="nlEmail" placeholder="Optional"></div>
+          <div><label for="nlGuardian">Parent / Guardian Name</label><input type="text" id="nlGuardian"></div>
+          <div><label for="nlGuardianEmail">Parent / Guardian Email</label><input type="email" id="nlGuardianEmail"></div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">
+          <input type="checkbox" id="nlConsent" style="width:19px;height:19px;accent-color:var(--crimson);margin-top:2px">
+          <label for="nlConsent" style="text-transform:none;letter-spacing:0;font-size:14px;font-weight:600;color:var(--ink);margin:0;flex:1 1 320px">
+            I have signed parent/guardian consent on file for this Kappa Leaguer to hold an account and have their
+            progress recorded. Leave unchecked to add them to the roster without account access.
+          </label>
+        </div>
+        <div class="btnrow" style="margin-top:14px">
+          <button class="btn" id="btnAdd">+ Add to Roster</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Module grids -->
+    <section class="card">
+      <div class="card-hd">
+        <h2 id="modulesHeading">Module Completion</h2>
+        <div class="btnrow noprint" id="leaguerTools" hidden>
+          <button class="btn ghost sm" id="btnPrintSelf">Print My Record</button>
+        </div>
+      </div>
+      <div class="card-bd"><div id="leaguerList"></div></div>
+    </section>
+
+    <footer class="subinfo" id="cardSubmit">
+      <h3>Submitting Completions</h3>
+      <p class="note">Once modules are completed, email the National Guide Right Executive Committee &mdash;
+        <b>Draon Glenn</b>, <a href="mailto:draonglenn@gmail.com">draonglenn@gmail.com</a> &mdash; and attach the exported CSV.</p>
+      <ul>
+        <li>Chapter Name</li>
+        <li>Chapter Province</li>
+        <li>Subject line format: <b>&ldquo;St. Louis Kappa League Module Completion&rdquo;</b> (substitute your chapter)</li>
+      </ul>
+      <p class="note" style="margin-top:10px">Students register at <b>guideright.igrad.com</b>.</p>
+    </footer>
+
+    <div id="printArea"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* =================================================================
+     CONFIGURATION — replace these two values with your own.
+     Supabase dashboard → Project Settings → API
+     The anon key is safe to publish: row-level security in
+     supabase-schema.sql is what actually protects the data.
+     ================================================================= */
+  var SUPABASE_URL      = "YOUR_SUPABASE_URL";
+  var SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+  /* ================================================================= */
+
+  var TIERS = [
+    {tier:1,modules:["Banking with Financial Institutions","Creating a Budget (and sticking to it)","Setting Up an Emergency Fund"]},
+    {tier:2,modules:["Understanding Credit Reports & Scores","Choosing a School and Understanding the Cost","Finding Scholarships to help pay for school"]},
+    {tier:3,modules:["Finding Your Dream Career","Borrowing Smart and Preparing for Higher Education","Understanding Your Paycheck and W-2"]},
+    {tier:4,modules:["Creating a Financial Plan for Your Goals and Priorities","Getting Out of Debt","Managing Financial Stress"]},
+    {tier:5,modules:["Mastering Credit and Optimizing your Score","Using Credit Cards Responsibly","Repaying your Student Loans"]},
+    {tier:6,modules:["Securing Scholarships for your Higher Education","Staying on Track with Student Loans while in School","Buying or Leasing a Car"]},
+    {tier:7,modules:["Saving for Goals","Protecting Yourself from Identity Theft and Scams","Investing to Build Wealth"]}
+  ];
+  var TOTAL_MODULES = 21;
+  var DATE_MIN = "2026-01-01", DATE_MAX = "2027-12-31";
+  var LEVELS = [
+    {tiers:2,name:"Recognition Level I"},
+    {tiers:4,name:"Recognition Level II"},
+    {tiers:6,name:"Recognition Level III"},
+    {tiers:7,name:"Full Program Completion"}
+  ];
+
+  var sb = null;
+  var app = {
+    session:null, profile:null, chapter:null,
+    isDirector:false,
+    leaguers:[],            // roster rows
+    completions:{},         // leaguer_id -> { "t1m0": row }
+    open:{}                 // leaguer_id -> bool
+  };
+
+  /* ---------------- small helpers ---------------- */
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+  function key(t,i){ return "t"+t+"m"+i; }
+  function show(id){ $(id).hidden = false; }
+  function hide(id){ $(id).hidden = true; }
+  function screen(which){
+    ["screenLoading","screenAuth","screenNoAccess","screenApp"].forEach(function(s){
+      $(s).hidden = (s !== which);
+    });
+  }
+  function toast(msg){
+    var el = $("toast"); el.textContent = msg; el.classList.add("show");
+    clearTimeout(toast._t); toast._t = setTimeout(function(){ el.classList.remove("show"); }, 3000);
+  }
+  function setSave(state, text){
+    var el = $("savePill");
+    el.className = "savepill " + (state||"");
+    el.textContent = text || (state === "saving" ? "Saving…" : state === "error" ? "Not saved" : "Synced");
+  }
+  function authMsg(kind, text){
+    var el = $("authMsg");
+    el.className = "msg show " + kind;
+    el.textContent = text;
+  }
+  function fmtDate(iso){
+    if(!iso) return "";
+    var p = String(iso).slice(0,10).split("-");
+    if(p.length !== 3) return iso;
+    var mo=["January","February","March","April","May","June","July","August","September","October","November","December"];
+    return (mo[parseInt(p[1],10)-1]||p[1]) + " " + parseInt(p[2],10) + ", " + p[0];
+  }
+  function deadlineFor(sem){
+    if(sem === "Fall 2026") return "2026-12-31";
+    return "2027-05-31";
+  }
+
+  /* ---------------- progress math ---------------- */
+  function rowFor(lid,t,i){ return (app.completions[lid]||{})[key(t,i)] || null; }
+  function isDone(lid,t,i){ var r = rowFor(lid,t,i); return !!(r && r.completed); }
+  function isVerified(lid,t,i){ var r = rowFor(lid,t,i); return !!(r && r.verified); }
+
+  function countModules(lid, verifiedOnly){
+    var n=0;
+    for(var a=0;a<TIERS.length;a++) for(var b=0;b<3;b++){
+      if(verifiedOnly ? isVerified(lid,TIERS[a].tier,b) : isDone(lid,TIERS[a].tier,b)) n++;
+    }
+    return n;
+  }
+  function countTiers(lid, verifiedOnly){
+    var n=0;
+    for(var a=0;a<TIERS.length;a++){
+      var all=true;
+      for(var b=0;b<3;b++){
+        if(!(verifiedOnly ? isVerified(lid,TIERS[a].tier,b) : isDone(lid,TIERS[a].tier,b))){ all=false; break; }
+      }
+      if(all) n++;
+    }
+    return n;
+  }
+  function levelFor(tiers){
+    var l=null;
+    for(var i=0;i<LEVELS.length;i++) if(tiers >= LEVELS[i].tiers) l = LEVELS[i].name;
+    return l;
+  }
+  function lastDate(lid){
+    var latest="";
+    for(var a=0;a<TIERS.length;a++) for(var b=0;b<3;b++){
+      var r = rowFor(lid,TIERS[a].tier,b);
+      if(r && r.completed && r.date_completed && r.date_completed > latest) latest = r.date_completed;
+    }
+    return latest;
+  }
+
+  /* ---------------- data loading ---------------- */
+  function loadCompletionsInto(rows){
+    app.completions = {};
+    for(var i=0;i<rows.length;i++){
+      var r = rows[i];
+      if(!app.completions[r.leaguer_id]) app.completions[r.leaguer_id] = {};
+      app.completions[r.leaguer_id][key(r.tier, r.module_index)] = r;
+    }
+  }
+
+  function loadAll(){
+    return Promise.resolve()
+      .then(function(){
+        return sb.from("chapters").select("*").limit(1).maybeSingle();
+      })
+      .then(function(res){
+        if(res.error) throw res.error;
+        app.chapter = res.data || null;
+        return sb.from("leaguers").select("*").order("full_name");
+      })
+      .then(function(res){
+        if(res.error) throw res.error;
+        app.leaguers = res.data || [];
+        return sb.from("module_completions").select("*");
+      })
+      .then(function(res){
+        if(res.error) throw res.error;
+        loadCompletionsInto(res.data || []);
+        renderAll();
+      });
+  }
+
+  /* ---------------- rendering ---------------- */
+  function renderChapter(){
+    if(!app.chapter){ return; }
+    $("chapter").value  = app.chapter.name || "";
+    $("province").value = app.chapter.province || "";
+    $("semester").value = app.chapter.semester || "Fall 2026";
+    $("director").value = app.isDirector ? (app.profile.full_name || "") : "";
+    // A Kappa Leaguer sees the chapter for context but never an empty
+    // director field they cannot fill in.
+    $("fieldDirector").hidden = !app.isDirector;
+    var ro = !app.isDirector;
+    ["chapter","province","semester","director"].forEach(function(id){ $(id).disabled = ro; });
+  }
+
+  function renderSummary(){
+    if(!app.isDirector) return;
+    var wrap = $("summaryWrap");
+    if(!app.leaguers.length){
+      wrap.innerHTML = '<div class="empty"><p>No Kappa Leaguers on the roster yet.</p>'+
+        '<p class="note">Add them below. Each one gets all 21 modules automatically.</p></div>';
+      return;
+    }
+    var rows="";
+    for(var i=0;i<app.leaguers.length;i++){
+      var l = app.leaguers[i];
+      var mc = countModules(l.id,false), tc = countTiers(l.id,false), vt = countTiers(l.id,true);
+      var pct = Math.round(mc/TOTAL_MODULES*100);
+      var lvl = levelFor(vt);
+      var dots="";
+      for(var t=1;t<=7;t++){
+        var full=true;
+        for(var b=0;b<3;b++) if(!isDone(l.id,t,b)){ full=false; break; }
+        dots += '<span class="'+(full?"on":"")+'" title="Tier '+t+'">'+t+'</span>';
+      }
+      rows += '<tr>'+
+        '<td><b>'+esc(l.full_name)+'</b><br><span class="badge '+esc(l.consent)+'">'+esc(l.consent)+'</span></td>'+
+        '<td><div class="tierdots">'+dots+'</div></td>'+
+        '<td class="num">'+tc+' / 7</td>'+
+        '<td class="num">'+vt+' / 7</td>'+
+        '<td class="num">'+mc+' / '+TOTAL_MODULES+'</td>'+
+        '<td><div class="bar"><i style="width:'+pct+'%"></i></div></td>'+
+        '<td>'+(lvl?'<span class="lvl">'+esc(lvl)+'</span>':'<span class="lvl none">In progress</span>')+'</td>'+
+        '<td class="num">'+(lastDate(l.id)?esc(fmtDate(lastDate(l.id))):'&mdash;')+'</td>'+
+      '</tr>';
+    }
+    wrap.innerHTML = '<div style="overflow-x:auto"><table class="tbl"><thead><tr>'+
+      '<th>Kappa Leaguer</th><th>Tiers</th><th class="num">Tiers Done</th><th class="num">Verified</th>'+
+      '<th class="num">Modules</th><th>Progress</th><th>Recognition</th><th class="num">Last Completion</th>'+
+      '</tr></thead><tbody>'+rows+'</tbody></table></div>'+
+      '<p class="note" style="margin-top:12px">Recognition level is based on <b>verified</b> Tiers. '+
+      'Self-reported completions count toward progress but need a director\'s check before they count for National.</p>';
+  }
+
+  function renderLeaguers(){
+    var host = $("leaguerList");
+    if(!app.leaguers.length){
+      host.innerHTML = '<div class="empty"><p>Nothing to show yet.</p></div>';
+      return;
+    }
+    var dl = deadlineFor(app.chapter ? app.chapter.semester : "Fall 2026");
+    var html="";
+    for(var i=0;i<app.leaguers.length;i++){
+      var l = app.leaguers[i];
+      var openCls = (app.open[l.id] || !app.isDirector) ? " open" : "";
+      var tiersHtml="";
+      for(var a=0;a<TIERS.length;a++){
+        var T = TIERS[a], doneCount=0, mods="";
+        for(var m=0;m<T.modules.length;m++){
+          var r = rowFor(l.id,T.tier,m);
+          var done = !!(r && r.completed), ver = !!(r && r.verified);
+          var dt = (r && r.date_completed) ? String(r.date_completed).slice(0,10) : "";
+          var late = done && dt && dt > dl;
+          if(done) doneCount++;
+          mods += '<div class="mod'+(done?" done":"")+(ver?" verified":"")+'" data-row="'+esc(r?r.id:"")+'">'+
+            '<input type="checkbox" data-act="chk" data-row="'+esc(r?r.id:"")+'"'+(done?" checked":"")+
+              ' aria-label="Completed: '+esc(T.modules[m])+'">'+
+            '<span class="mname">'+esc(T.modules[m])+'</span>'+
+            '<span class="dwrap"><label>Date Completed</label>'+
+              '<input type="date" min="'+DATE_MIN+'" max="'+DATE_MAX+'" value="'+esc(dt)+
+              '" data-act="date" data-row="'+esc(r?r.id:"")+'">'+
+              (late?'<span class="late" title="After the reporting deadline">past due date</span>':'')+
+            '</span>'+
+            (app.isDirector
+              ? '<span class="vwrap"><input type="checkbox" data-act="ver" data-row="'+esc(r?r.id:"")+'"'+
+                (ver?" checked":"")+(done?"":" disabled")+' aria-label="Verified"> Verified</span>'
+              : '<span class="vwrap">'+(ver?"&#10003; Verified by director":"Awaiting verification")+'</span>')+
+          '</div>';
+        }
+        var tierDone = doneCount === T.modules.length;
+        tiersHtml += '<div class="tier"><div class="tier-hd"><span>Tier '+T.tier+'</span>'+
+          '<span class="st'+(tierDone?" done":"")+'">'+doneCount+' of '+T.modules.length+
+          (tierDone?' &mdash; complete':' complete')+'</span></div>'+mods+'</div>';
+      }
+
+      var tc = countTiers(l.id,false), mc = countModules(l.id,false);
+      html += '<div class="leaguer'+openCls+'" data-lid="'+esc(l.id)+'">'+
+        '<div class="leaguer-hd" data-act="toggle" data-lid="'+esc(l.id)+'">'+
+          (app.isDirector?'<span class="chev">&#9654;</span>':'')+
+          '<span class="nm">'+esc(l.full_name)+'</span>'+
+          '<span class="meta">'+tc+' / 7 Tiers &middot; '+mc+' / '+TOTAL_MODULES+' modules</span>'+
+          (app.isDirector
+            ? '<span class="badge '+esc(l.consent)+'">'+esc(l.consent)+'</span>'+
+              '<button class="btn ghost sm noprint" data-act="consent" data-lid="'+esc(l.id)+'">'+
+                (l.consent==="granted"?"Revoke consent":"Record consent")+'</button>'+
+              '<button class="btn danger sm noprint" data-act="del" data-lid="'+esc(l.id)+'">Remove</button>'
+            : '')+
+        '</div>'+
+        '<div class="leaguer-bd">'+tiersHtml+'</div>'+
+      '</div>';
+    }
+    host.innerHTML = html;
+  }
+
+  function renderAll(){
+    renderChapter();
+    renderSummary();
+    renderLeaguers();
+  }
+
+  /* Update one card in place so ticking a box never rebuilds the DOM
+     under the user's cursor. */
+  function refreshLeaguer(lid){
+    var card = document.querySelector('.leaguer[data-lid="'+lid+'"]');
+    if(!card){ renderAll(); return; }
+    var dl = deadlineFor(app.chapter ? app.chapter.semester : "Fall 2026");
+    for(var a=0;a<TIERS.length;a++){
+      var T = TIERS[a], doneCount=0;
+      for(var m=0;m<3;m++){
+        var r = rowFor(lid,T.tier,m);
+        if(!r) continue;
+        var row = card.querySelector('.mod[data-row="'+r.id+'"]');
+        if(!row) continue;
+        var done = !!r.completed, ver = !!r.verified;
+        if(done) doneCount++;
+        row.classList.toggle("done", done);
+        row.classList.toggle("verified", ver);
+        var box = row.querySelector('[data-act="chk"]'); if(box) box.checked = done;
+        var vbox = row.querySelector('[data-act="ver"]');
+        if(vbox){ vbox.checked = ver; vbox.disabled = !done; }
+        var dEl = row.querySelector('[data-act="date"]');
+        var dt = r.date_completed ? String(r.date_completed).slice(0,10) : "";
+        if(dEl && dEl !== document.activeElement) dEl.value = dt;
+        var lateEl = row.querySelector(".late");
+        var isLate = done && dt && dt > dl;
+        if(isLate && !lateEl){
+          var s = document.createElement("span");
+          s.className="late"; s.title="After the reporting deadline"; s.textContent="past due date";
+          row.querySelector(".dwrap").appendChild(s);
+        } else if(!isLate && lateEl){ lateEl.remove(); }
+      }
+      var st = card.querySelectorAll(".tier-hd .st")[a];
+      if(st){
+        var tierDone = doneCount === 3;
+        st.classList.toggle("done", tierDone);
+        st.innerHTML = doneCount + " of 3" + (tierDone ? " &mdash; complete" : " complete");
+      }
+    }
+    var meta = card.querySelector(".leaguer-hd .meta");
+    if(meta) meta.innerHTML = countTiers(lid,false)+" / 7 Tiers &middot; "+countModules(lid,false)+" / "+TOTAL_MODULES+" modules";
+    renderSummary();
+  }
+
+  /* ---------------- writes ---------------- */
+  function findRow(rowId){
+    for(var lid in app.completions){
+      for(var k in app.completions[lid]){
+        if(app.completions[lid][k].id === rowId) return app.completions[lid][k];
+      }
+    }
+    return null;
+  }
+
+  function saveRow(row, patch){
+    var before = {completed:row.completed, date_completed:row.date_completed, verified:row.verified};
+    Object.keys(patch).forEach(function(k){ row[k] = patch[k]; });
+    refreshLeaguer(row.leaguer_id);
+    setSave("saving");
+    return sb.from("module_completions").update(patch).eq("id", row.id).select().maybeSingle()
+      .then(function(res){
+        if(res.error) throw res.error;
+        if(res.data){
+          Object.keys(res.data).forEach(function(k){ row[k] = res.data[k]; });
+        }
+        refreshLeaguer(row.leaguer_id);
+        setSave("saved");
+      })
+      .catch(function(err){
+        Object.keys(before).forEach(function(k){ row[k] = before[k]; });
+        refreshLeaguer(row.leaguer_id);
+        setSave("error");
+        toast("Couldn't save that change: " + (err.message || "connection problem"));
+      });
+  }
+
+  function saveChapter(){
+    if(!app.isDirector || !app.chapter) return;
+    var patch = {
+      name: $("chapter").value.trim(),
+      province: $("province").value.trim(),
+      semester: $("semester").value
+    };
+    setSave("saving");
+    sb.from("chapters").update(patch).eq("id", app.chapter.id).select().maybeSingle()
+      .then(function(res){
+        if(res.error) throw res.error;
+        if(res.data) app.chapter = res.data;
+        setSave("saved");
+        renderLeaguers();
+      })
+      .catch(function(err){ setSave("error"); toast("Chapter not saved: " + (err.message||"")); });
+  }
+
+  function addLeaguer(){
+    var name = $("nlName").value.trim();
+    if(!name){ toast("Enter the Kappa Leaguer's name."); $("nlName").focus(); return; }
+    var email = $("nlEmail").value.trim().toLowerCase();
+    var consent = $("nlConsent").checked ? "granted" : "pending";
+    if(email && consent !== "granted"){
+      if(!window.confirm("You've entered an email but haven't confirmed guardian consent. "+
+        "They'll be added to the roster but won't be able to sign in until you record consent. Continue?")) return;
+    }
+    var rec = {
+      chapter_id: app.chapter.id,
+      full_name: name,
+      member_email: email || null,
+      guardian_name: $("nlGuardian").value.trim() || null,
+      guardian_email: $("nlGuardianEmail").value.trim().toLowerCase() || null,
+      consent: consent
+    };
+    setSave("saving");
+    sb.from("leaguers").insert(rec).select().maybeSingle()
+      .then(function(res){
+        if(res.error) throw res.error;
+        ["nlName","nlEmail","nlGuardian","nlGuardianEmail"].forEach(function(id){ $(id).value=""; });
+        $("nlConsent").checked = false;
+        setSave("saved");
+        toast(name + " added to the roster.");
+        return loadAll();
+      })
+      .catch(function(err){
+        setSave("error");
+        toast("Couldn't add: " + (err.message||"error"));
+      });
+  }
+
+  function toggleConsent(lid){
+    var l = null;
+    for(var i=0;i<app.leaguers.length;i++) if(app.leaguers[i].id===lid) l = app.leaguers[i];
+    if(!l) return;
+    var next = l.consent === "granted" ? "revoked" : "granted";
+    if(next === "granted"){
+      if(!window.confirm("Confirm you have signed parent/guardian consent on file for "+l.full_name+
+        " before granting account access.")) return;
+    } else {
+      if(!window.confirm("Revoke consent for "+l.full_name+"? Their sign-in access is cut off immediately. "+
+        "Their recorded progress is kept.")) return;
+    }
+    setSave("saving");
+    sb.from("leaguers").update({consent: next}).eq("id", lid).select().maybeSingle()
+      .then(function(res){
+        if(res.error) throw res.error;
+        setSave("saved");
+        return loadAll();
+      })
+      .catch(function(err){ setSave("error"); toast("Couldn't update consent: "+(err.message||"")); });
+  }
+
+  function removeLeaguer(lid){
+    var l=null;
+    for(var i=0;i<app.leaguers.length;i++) if(app.leaguers[i].id===lid) l=app.leaguers[i];
+    if(!l) return;
+    if(!window.confirm('Remove "'+l.full_name+'" and all their recorded completions? '+
+      'This cannot be undone — export your CSV first if you need a record.')) return;
+    setSave("saving");
+    sb.from("leaguers").delete().eq("id", lid)
+      .then(function(res){
+        if(res.error) throw res.error;
+        setSave("saved");
+        toast("Removed from roster.");
+        return loadAll();
+      })
+      .catch(function(err){ setSave("error"); toast("Couldn't remove: "+(err.message||"")); });
+  }
+
+  /* ---------------- CSV ---------------- */
+  function csvCell(v){
+    v = String(v==null?"":v);
+    return /[",\n\r]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+  }
+  function buildCSV(){
+    var ch = app.chapter || {name:"",province:"",semester:""};
+    var head = ["Chapter Name","Chapter Province","Kappa League/Guide Right Director Name",
+      "Kappa Leaguer's Name","Tier","IGRAD Module","Completed","Date Completed","Verified",
+      "Tiers Completed","Verified Tiers","Modules Completed","Recognition Level","Reporting Period"];
+    var lines = [head.map(csvCell).join(",")];
+    var dirName = app.profile ? (app.profile.full_name || app.profile.email || "") : "";
+    for(var i=0;i<app.leaguers.length;i++){
+      var l = app.leaguers[i];
+      var tc = countTiers(l.id,false), vt = countTiers(l.id,true), mc = countModules(l.id,false);
+      var lvl = levelFor(vt) || "In progress";
+      for(var a=0;a<TIERS.length;a++){
+        var T = TIERS[a];
+        for(var m=0;m<T.modules.length;m++){
+          var r = rowFor(l.id,T.tier,m) || {};
+          lines.push([ch.name, ch.province, dirName, l.full_name,
+            "Tier "+T.tier, T.modules[m],
+            r.completed?"Yes":"No",
+            (r.completed && r.date_completed)?String(r.date_completed).slice(0,10):"",
+            r.verified?"Yes":"No",
+            tc, vt, mc, lvl, ch.semester].map(csvCell).join(","));
+        }
+      }
+    }
+    return lines.join("\r\n");
+  }
+  function exportCSV(){
+    if(!app.leaguers.length){ toast("Nothing to export yet."); return; }
+    var ch = app.chapter || {};
+    var slug = (ch.name||"Chapter").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"");
+    var name = slug+"_KappaLeague_iGrad_"+String(ch.semester||"").replace(/\s+/g,"-")+".csv";
+    var blob = new Blob(["﻿"+buildCSV()], {type:"text/csv;charset=utf-8;"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href=url; a.download=name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1200);
+    toast("CSV exported: "+name);
+  }
+
+  /* ---------------- print ---------------- */
+  function buildPrint(){
+    var area = $("printArea");
+    var ch = app.chapter || {name:"",province:"",semester:""};
+    var dl = deadlineFor(ch.semester);
+    var dirName = app.isDirector ? (app.profile.full_name || app.profile.email || "") : "";
+    var html="";
+    for(var i=0;i<app.leaguers.length;i++){
+      var l = app.leaguers[i];
+      var tc = countTiers(l.id,false), vt = countTiers(l.id,true), mc = countModules(l.id,false);
+      var lvl = levelFor(vt);
+      var rows="";
+      for(var a=0;a<TIERS.length;a++){
+        var T = TIERS[a];
+        for(var m=0;m<T.modules.length;m++){
+          var r = rowFor(l.id,T.tier,m) || {};
+          rows += '<tr><td class="tr">'+(m===0?"Tier "+T.tier:"")+'</td>'+
+            '<td>'+esc(T.modules[m])+'</td>'+
+            '<td>'+(r.completed?"Complete":"&mdash;")+'</td>'+
+            '<td>'+(r.verified?"Yes":"&mdash;")+'</td>'+
+            '<td>'+((r.completed&&r.date_completed)?esc(fmtDate(r.date_completed)):"&mdash;")+'</td></tr>';
+        }
+      }
+      html += '<div class="psheet">'+
+        '<div class="phd"><h2>Kappa League &middot; iGrad Financial Literacy Record</h2>'+
+        '<div class="porg">National Guide Right Financial Literacy Initiative &middot; Kappa Alpha Psi Fraternity, Inc.</div></div>'+
+        '<div class="pmeta">'+
+          '<div><b>Kappa Leaguer:</b> '+esc(l.full_name)+'</div>'+
+          '<div><b>Chapter:</b> '+esc(ch.name||"______________")+'</div>'+
+          '<div><b>Province:</b> '+esc(ch.province||"______________")+'</div>'+
+          '<div><b>Director:</b> '+esc(dirName||"______________")+'</div>'+
+          '<div><b>Reporting Period:</b> '+esc(ch.semester||"")+'</div>'+
+          '<div><b>Due Date:</b> '+esc(fmtDate(dl))+'</div>'+
+        '</div>'+
+        '<div class="pstat"><b>Progress:</b> '+tc+' of 7 Tiers completed &middot; '+vt+' Tiers verified &middot; '+
+          mc+' of '+TOTAL_MODULES+' modules'+
+          (lvl?' &nbsp;&bull;&nbsp; <b>Recognition earned: '+esc(lvl)+'</b>':' &nbsp;&bull;&nbsp; Recognition awarded every two verified Tiers')+
+        '</div>'+
+        '<table class="ptbl"><thead><tr><th style="width:56px">Tier</th><th>iGrad Module</th>'+
+        '<th style="width:74px">Status</th><th style="width:64px">Verified</th><th style="width:112px">Date Completed</th></tr></thead>'+
+        '<tbody>'+rows+'</tbody></table>'+
+        '<div class="psign"><div>Kappa Leaguer Signature</div><div>Kappa League / Guide Right Director</div><div>Date</div></div>'+
+      '</div>';
+    }
+    area.innerHTML = html;
+  }
+  function doPrint(){
+    if(!app.leaguers.length){ toast("Nothing to print yet."); return; }
+    buildPrint(); window.print();
+  }
+  window.addEventListener("beforeprint", function(){
+    if(app.leaguers.length) buildPrint();
+  });
+
+  /* ---------------- auth ---------------- */
+  function sendMagicLink(){
+    var email = $("authEmail").value.trim();
+    if(!email || email.indexOf("@") < 1){ authMsg("bad","Enter a valid email address."); return; }
+    $("btnSendLink").disabled = true;
+    authMsg("ok","Sending…");
+    sb.auth.signInWithOtp({ email: email, options:{ emailRedirectTo: window.location.href.split("#")[0] } })
+      .then(function(res){
+        $("btnSendLink").disabled = false;
+        if(res.error){ authMsg("bad", res.error.message); return; }
+        authMsg("ok","Check your email — we sent a sign-in link to "+email+". You can close this tab.");
+      })
+      .catch(function(err){
+        $("btnSendLink").disabled = false;
+        authMsg("bad", err.message || "Could not send the link.");
+      });
+  }
+
+  function signOut(){
+    sb.auth.signOut().then(function(){ window.location.reload(); });
+  }
+
+  function bootstrap(){
+    return sb.from("profiles").select("*").eq("id", app.session.user.id).maybeSingle()
+      .then(function(res){
+        if(res.error) throw res.error;
+        if(res.data) return res.data;
+        // No profile yet — try to link this email to a roster record.
+        return sb.rpc("claim_leaguer_record").then(function(r2){
+          if(r2.error) throw r2.error;
+          if(!r2.data) return null;
+          return sb.from("profiles").select("*").eq("id", app.session.user.id).maybeSingle()
+            .then(function(r3){ return r3.data || null; });
+        });
+      })
+      .then(function(profile){
+        if(!profile){
+          $("noAccessMsg").textContent =
+            "We couldn't match "+app.session.user.email+" to an active roster record. "+
+            "Ask your Guide Right Director to add this exact email and record your parent or guardian's consent, then check again.";
+          screen("screenNoAccess");
+          return;
+        }
+        app.profile = profile;
+        app.isDirector = profile.role === "director";
+        $("whoEmail").textContent = app.session.user.email;
+        $("whoRole").textContent = app.isDirector ? "Director" : "Kappa Leaguer";
+
+        // Role-dependent chrome
+        $("cardSummary").hidden = !app.isDirector;
+        $("cardAdd").hidden     = !app.isDirector;
+        $("cardSubmit").hidden  = !app.isDirector;
+        $("leaguerTools").hidden = app.isDirector;
+        $("modulesHeading").textContent = app.isDirector
+          ? "Kappa Leaguers & Module Completion"
+          : "My iGrad Modules";
+
+        screen("screenApp");
+        return loadAll();
+      })
+      .catch(function(err){
+        screen("screenAuth");
+        authMsg("bad","Could not load your account: "+(err.message||"unknown error"));
+      });
+  }
+
+  /* ---------------- events ---------------- */
+  function wire(){
+    $("btnSendLink").addEventListener("click", sendMagicLink);
+    $("authEmail").addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); sendMagicLink(); }});
+    $("btnSignOut").addEventListener("click", signOut);
+    $("btnSignOut2").addEventListener("click", signOut);
+    $("btnRetryClaim").addEventListener("click", function(){ screen("screenLoading"); bootstrap(); });
+    $("btnExport").addEventListener("click", exportCSV);
+    $("btnPrint").addEventListener("click", doPrint);
+    $("btnPrintSelf").addEventListener("click", doPrint);
+    $("btnAdd").addEventListener("click", addLeaguer);
+
+    ["chapter","province","director"].forEach(function(id){
+      $(id).addEventListener("change", saveChapter);
+    });
+    $("semester").addEventListener("change", saveChapter);
+
+    $("leaguerList").addEventListener("click", function(e){
+      var el = e.target.closest("[data-act]");
+      if(!el) return;
+      var act = el.getAttribute("data-act");
+
+      if(act === "toggle"){
+        if(!app.isDirector) return;
+        var lid = el.getAttribute("data-lid");
+        app.open[lid] = !app.open[lid];
+        var card = el.closest(".leaguer");
+        if(card) card.classList.toggle("open", !!app.open[lid]);
+        return;
+      }
+      if(act === "consent"){ e.stopPropagation(); toggleConsent(el.getAttribute("data-lid")); return; }
+      if(act === "del"){ e.stopPropagation(); removeLeaguer(el.getAttribute("data-lid")); return; }
+
+      if(act === "chk"){
+        var row = findRow(el.getAttribute("data-row"));
+        if(!row) return;
+        var patch = { completed: el.checked };
+        if(el.checked && !row.date_completed){
+          var d = new Date();
+          var iso = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+          if(iso < DATE_MIN) iso = DATE_MIN;
+          if(iso > DATE_MAX) iso = DATE_MAX;
+          patch.date_completed = iso;
+        }
+        if(!el.checked) patch.date_completed = null;
+        saveRow(row, patch);
+        return;
+      }
+      if(act === "ver"){
+        var vrow = findRow(el.getAttribute("data-row"));
+        if(!vrow) return;
+        saveRow(vrow, { verified: el.checked });
+        return;
+      }
+    });
+
+    $("leaguerList").addEventListener("change", function(e){
+      var el = e.target.closest('[data-act="date"]');
+      if(!el) return;
+      var row = findRow(el.getAttribute("data-row"));
+      if(!row) return;
+      var patch = { date_completed: el.value || null };
+      if(el.value) patch.completed = true;
+      saveRow(row, patch);
+    });
+  }
+
+  /* ---------------- init ---------------- */
+  function init(){
+    if(SUPABASE_URL.indexOf("YOUR_") === 0 || SUPABASE_ANON_KEY.indexOf("YOUR_") === 0){
+      $("setupWarn").hidden = false;
+      screen("screenAuth");
+      $("btnSendLink").disabled = true;
+      authMsg("bad","This page isn't connected to Supabase yet — see the notice above.");
+      return;
+    }
+    if(!window.supabase || !window.supabase.createClient){
+      $("setupWarn").hidden = false;
+      $("setupWarn").innerHTML = "<b>Could not load the Supabase library.</b> Check the network connection "+
+        "or that your site's content security policy allows <code>cdn.jsdelivr.net</code>.";
+      screen("screenAuth");
+      $("btnSendLink").disabled = true;
+      return;
+    }
+
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    wire();
+
+    sb.auth.getSession().then(function(res){
+      app.session = res.data ? res.data.session : null;
+      if(app.session) bootstrap();
+      else screen("screenAuth");
+    });
+
+    sb.auth.onAuthStateChange(function(event, session){
+      var had = !!app.session;
+      app.session = session;
+      if(session && !had){ screen("screenLoading"); bootstrap(); }
+      else if(!session && had){ screen("screenAuth"); }
+    });
+  }
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+</body>
+</html>
