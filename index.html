@@ -335,19 +335,20 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
 <script>
 (function(){
   "use strict";
 
   /* =================================================================
-     CONFIGURATION — replace these two values with your own.
-     Supabase dashboard → Project Settings → API
-     The anon key is safe to publish: row-level security in
-     supabase-schema.sql is what actually protects the data.
+     CONFIGURATION — project "kappa-league-igrad" (dlawebmaster's Org)
+     Supabase dashboard → Project Settings → API Keys
+     The publishable key is designed to sit in a browser: row-level
+     security in supabase-schema.sql is what actually protects the data.
+     Never put a SECRET key here — those bypass every policy.
      ================================================================= */
-  var SUPABASE_URL      = "YOUR_SUPABASE_URL";
-  var SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+  var SUPABASE_URL      = "https://ttycinspyobutrdfckwg.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_Keo_MsaCgI-q3Zj6kH-SKw_Fnovcqk5";
   /* ================================================================= */
 
   var TIERS = [
